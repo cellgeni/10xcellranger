@@ -14,7 +14,8 @@ log.info "========================================="
 
 if( params.sample ){
     process imeta {
-        output: stdout imeta_data
+        output: 
+            stdout imeta_data
         script:
         """
         kinit vk6 -k -t /nfs/users/nfs_v/vk6/irods.keytab
@@ -28,12 +29,12 @@ if( params.sample ){
 }
 
 process iget {
-    input: imeta_data
+    input: 
+        file cram_file from imeta_data.flatMap{ it.readLines() }
     script:
     """
-    echo ${imeta_data}
     kinit vk6 -k -t /nfs/users/nfs_v/vk6/irods.keytab
-    id_run="\$(echo ${imeta_data} | cut -d'_' -f 1)"
-    iget \\seq\\${id_run}\\${imeta_data}
+    id_run="\$(echo ${cram_file} | cut -d'_' -f 1)"
+    iget \\seq\\${id_run}\\${cram_file}
     """
 }
