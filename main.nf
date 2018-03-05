@@ -19,7 +19,7 @@ if( params.sample ){
         """
         kinit vk6 -k -t /nfs/users/nfs_v/vk6/irods.keytab
         imeta qu -z seq \\
-            -d sample = ${sample} \\
+            -d sample = ${params.sample} \\
             and target = 1 and manual_qc = 1 \\
         | grep cram \\
         | cut -d' ' -f 2
