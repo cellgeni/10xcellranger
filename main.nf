@@ -14,7 +14,7 @@ log.info "========================================="
 
 if( params.sample ){
     process imeta {
-        output: imeta_data
+        output: stdout imeta_data
         script:
         """
         kinit vk6 -k -t /nfs/users/nfs_v/vk6/irods.keytab
