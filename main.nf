@@ -22,6 +22,6 @@ process iget {
     """
     kinit vk6 -k -t /nfs/users/nfs_v/vk6/irods.keytab
     id_run="$(echo ${imeta_data} | cut -d'_' -f 1)"
-    iget \seq\$id_run\\${imeta_data}
+    iget \seq\\${id_run}\\${imeta_data}
     """
 }
