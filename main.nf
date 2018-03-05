@@ -31,6 +31,7 @@ process iget {
     input: imeta_data
     script:
     """
+    echo ${imeta_data}
     kinit vk6 -k -t /nfs/users/nfs_v/vk6/irods.keytab
     id_run="\$(echo ${imeta_data} | cut -d'_' -f 1)"
     iget \\seq\\${id_run}\\${imeta_data}
