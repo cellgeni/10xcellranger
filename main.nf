@@ -1,6 +1,8 @@
 
 params.sample = false
 
+summary['Sample']        = params.sample
+
 if( params.sample ){
     process imeta {
         output: imeta_data
