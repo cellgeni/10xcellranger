@@ -30,7 +30,7 @@ if( params.sample ){
 
 process iget {
     input: 
-        file cram_file from imeta_data.flatMap{ it.readLines() }
+        val cram_file from imeta_data.flatMap{ it.readLines() }
     script:
     """
     kinit vk6 -k -t /nfs/users/nfs_v/vk6/irods.keytab
