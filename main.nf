@@ -35,6 +35,6 @@ process iget {
     """
     kinit vk6 -k -t /nfs/users/nfs_v/vk6/irods.keytab
     id_run="\$(echo ${cram_file} | cut -d'_' -f 1)"
-    iget \\seq\\\$id_run\\${cram_file}
+    iget /seq/\$id_run/${cram_file}
     """
 }
