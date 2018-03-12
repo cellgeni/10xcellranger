@@ -14,31 +14,26 @@ summary['Sample']        = params.sample
 log.info summary.collect { k,v -> "${k.padRight(15)}: $v" }.join("\n")
 log.info "========================================="
 
-if( params.sample ){
-    process imeta {
-        output: 
-            stdout imeta_data
-        script:
-        """
-        kinit ${params.irods_username} -k -t ${params.irods_keytab}
-        imeta qu -z seq \\
-            -d sample = ${params.sample} \\
-            and target = 1 and manual_qc = 1 \\
-        | grep cram \\
-        | cut -d' ' -f 2
-        """
-    }
-}
+sample_list = Channel
+     .fromPath('samples.txt')
+     .splitText()
 
-process iget {
+process irods {
+    beforeScript "set +u; source activate rnaseq1.5"
+    afterScript "set +u; source deactivate"
     input: 
-        val cram_file from imeta_data.flatMap{ it.readLines() }
+        val sample from sample_list
+    output: 
+        file "${sample}.cram" into read_files_cram
     script:
     """
     kinit ${params.irods_username} -k -t ${params.irods_keytab}
-    id_run="\$(echo ${cram_file} | cut -d'_' -f 1)"
-    iget /seq/\$id_run/${cram_file}
-    # merge sample cram files
-    samtools merge -f - *.cram
+    imeta qu -z seq \\
+        -d sample = ${sample} \\
+        and target = 1 and manual_qc = 1 \\
+    | sed ':a;N;$!ba;s/----\ncollection:/iget -K/g' \\
+    | sed ':a;N;$!ba;s/\ndataObj: /\//g' \\
+    | bash
+    samtools merge -f - *.cram > ${sample}.cram
     """
 }
