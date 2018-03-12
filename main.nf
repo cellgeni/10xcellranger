@@ -28,7 +28,7 @@ process irods {
         -d sample = $sample \\
         and target = 1 and manual_qc = 1 \\
     | sed ':a;N;\$!ba;s/----\ncollection:/iget -K/g' \\
-    | sed ':a;N;\$!ba;s/\ndataObj: /\//g' \\
+    | sed ':a;N;\$!ba;s/\ndataObj: /\\//g' \\
     | bash
     samtools merge -f - *.cram > $sample.cram
     """
