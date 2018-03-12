@@ -9,7 +9,6 @@ log.info "========================================="
 log.info "         10X cellranger v${version}"
 log.info "========================================="
 def summary = [:]
-summary['Sample']        = params.sample
 log.info summary.collect { k,v -> "${k.padRight(15)}: $v" }.join("\n")
 log.info "========================================="
 
