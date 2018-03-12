@@ -3,6 +3,8 @@
 version = '0.1'
 
 params.sample = false
+params.irods_username = 'vk6'
+params.irods_keytab = '~/irods.keytab'
 
 log.info "========================================="
 log.info "         10X cellranger v${version}"
@@ -18,7 +20,7 @@ if( params.sample ){
             stdout imeta_data
         script:
         """
-        kinit vk6 -k -t /nfs/users/nfs_v/vk6/irods.keytab
+        kinit ${params.irods_username} -k -t ${params.irods_keytab}
         imeta qu -z seq \\
             -d sample = ${params.sample} \\
             and target = 1 and manual_qc = 1 \\
@@ -33,8 +35,10 @@ process iget {
         val cram_file from imeta_data.flatMap{ it.readLines() }
     script:
     """
-    kinit vk6 -k -t /nfs/users/nfs_v/vk6/irods.keytab
+    kinit ${params.irods_username} -k -t ${params.irods_keytab}
     id_run="\$(echo ${cram_file} | cut -d'_' -f 1)"
     iget /seq/\$id_run/${cram_file}
+    # merge sample cram files
+    samtools merge -f - *.cram
     """
 }
