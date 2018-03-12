@@ -20,7 +20,7 @@ process irods {
     input: 
         val sample from sample_list.flatMap{ it.readLines() }
     output: 
-        file "$sample.cram" into read_files_cram
+        file "${sample}.cram" into read_files_cram
     script:
     """
     kinit ${params.irods_username} -k -t ${params.irods_keytab}
@@ -30,6 +30,6 @@ process irods {
     | sed ':a;N;\$!ba;s/----\ncollection:/iget -K/g' \\
     | sed ':a;N;\$!ba;s/\ndataObj: /\\//g' \\
     | bash
-    samtools merge -f - *.cram > $sample.cram
+    samtools merge -f - *.cram > ${sample}.cram
     """
 }
