@@ -2,7 +2,6 @@
 // Pipeline version
 version = '0.1'
 
-params.sample = false
 params.irods_username = 'vk6'
 params.irods_keytab = '~/irods.keytab'
 
@@ -16,13 +15,12 @@ log.info "========================================="
 
 sample_list = Channel
      .fromPath('samples.txt')
-     .splitText()
 
 process irods {
     beforeScript "set +u; source activate rnaseq1.5"
     afterScript "set +u; source deactivate"
     input: 
-        val sample from sample_list
+        val sample from sample_list.flatMap{ it.readLines() }
     output: 
         file "${sample}.cram" into read_files_cram
     script:
