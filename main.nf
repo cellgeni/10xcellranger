@@ -54,7 +54,7 @@ process cram2fastq10x {
         -2 ${cram}_R2_001.fastq.gz \\
         --i1 ${cram}_I1_001.fastq.gz \\
         -n -i --index-format i8 \\
-        -
+        ${cram}
     """
 }
 
