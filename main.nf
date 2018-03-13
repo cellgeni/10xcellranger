@@ -62,6 +62,7 @@ process cram2fastq10x {
  * STEP 3 - rename for cellranger
  */
 
+if(false) {
 process fastq10xRename {
     tag "${fastq.baseName}"
 
@@ -92,4 +93,5 @@ process fastq10xRename {
 		(( count++ ))
 	done
     """
+}
 }
