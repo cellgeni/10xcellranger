@@ -23,7 +23,7 @@ process irods {
     script:
     """
     imeta qu -z seq \\
-        -d sample = $sample \\
+        -d sample = ${sample} \\
         and target = 1 and manual_qc = 1 \\
     | sed ':a;N;\$!ba;s/----\\ncollection:/iget -K/g' \\
     | sed ':a;N;\$!ba;s/\\ndataObj: /\\//g' \\
@@ -82,11 +82,11 @@ process fastq10xRename {
 	count=1
 	for file in *I1_001.fastq.gz
 	do
-		mv "\${file}" "\${file/*.cram/$sample\_S\$count\_L001}"
+		mv "\${file}" "\${file/*.cram/${sample}\_S\$count\_L001}"
 		file=\$(sed 's/I1/R1/g' <<< \$file)
-		mv "\${file}" "\${file/*.cram/$sample\_S\$count\_L001}"
+		mv "\${file}" "\${file/*.cram/${sample}\_S\$count\_L001}"
 		file=\$(sed 's/R1/R2/g' <<< \$file)
-		mv "\${file}" "\${file/*.cram/$sample\_S\$count\_L001}"
+		mv "\${file}" "\${file/*.cram/${sample}\_S\$count\_L001}"
 		(( count++ ))
 	done
     """
