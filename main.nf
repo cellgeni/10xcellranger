@@ -15,6 +15,8 @@ log.info "========================================="
 sample_list = Channel.fromPath('samples.txt')
 
 process irods {
+    tag "${sample}"
+    
     beforeScript "kinit ${params.irods_username} -k -t ${params.irods_keytab}"
     input: 
         val sample from sample_list.flatMap{ it.readLines() }
@@ -36,7 +38,7 @@ process irods {
  */
 
 process cram2fastq10x {
-    tag "${cram.baseName}"
+    tag "${cram}"
     
     input:
         set val(sample), file(cram) from cram_files
@@ -61,7 +63,7 @@ process cram2fastq10x {
  */
 
 process fastq10xRename {
-    tag "${fastq.baseName}"
+    tag "${fastq}"
 
     input:
         set val(sample), file(fastq) from fastq_files
