@@ -38,9 +38,10 @@ process irods {
  */
 
 process cram2fastq10x {
+    tag "${cram.baseName}"
     
     input:
-        set val(sample), file(cram) from cram_files
+        set val(sample), file(cram) from cram_files.transponse()
     output:
         set val(sample), file('*.fastq.gz') into fastq_files
 
@@ -65,7 +66,7 @@ process fastq10xRename {
     tag "${fastq.baseName}"
 
     input:
-        set val(sample), file(fastq) from fastq_files
+        set val(sample), file(fastq) from fastq_files.transponse()
     output:
         set val(sample), file('*.fastq.gz') into fastq_files_10x
 
