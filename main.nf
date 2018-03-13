@@ -19,7 +19,7 @@ process irods {
     input: 
         val sample from sample_list.flatMap{ it.readLines() }
     output: 
-        set sample, file("*.cram") into cram_files
+        set val(sample), file("*.cram") into cram_files
     script:
     """
     imeta qu -z seq \\
@@ -39,9 +39,9 @@ process cram2fastq10x {
     tag "${cram.baseName}"
     
     input:
-        set sample, cram from cram_files
+        set val(sample), file(cram) from cram_files
     output:
-        set sample, file("*.fastq.gz") into fastq_files
+        set val(sample), file("*.fastq.gz") into fastq_files
 
     script:
     """
@@ -64,9 +64,9 @@ process fastq10xRename {
     tag "${fastq.baseName}"
 
     input:
-        set sample, fastq from fastq_files
+        set val(sample), file(fastq) from fastq_files
     output:
-        set sample, file("*.fastq.gz") into fastq_files_10x
+        set val(sample), file("*.fastq.gz") into fastq_files_10x
 
     script:
     """
