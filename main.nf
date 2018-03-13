@@ -38,7 +38,6 @@ process irods {
  */
 
 process cram2fastq10x {
-    tag "${cram.baseName}"
     
     input:
         set val(sample), file(cram) from cram_files
