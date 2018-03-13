@@ -48,9 +48,9 @@ process cram2fastq10x {
     samtools fastq \\
         -N \\
         -@ ${task.cpus} \\
-        -1 ${cram}\_R1_001.fastq.gz \\
-        -2 ${cram}\_R2_001.fastq.gz \\
-        --i1 ${cram}\_I1_001.fastq.gz \\
+        -1 ${cram}_R1_001.fastq.gz \\
+        -2 ${cram}_R2_001.fastq.gz \\
+        --i1 ${cram}_I1_001.fastq.gz \\
         -n -i --index-format i8 \\
         -
     """
