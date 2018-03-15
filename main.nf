@@ -33,6 +33,11 @@ process irods {
     """
 }
 
+def ind = 0
+cram_files_inds = cram_files
+    .map{ [ind++, it[0], it[1]] }
+    .transpose()
+
 /*
  * STEP 2 - cram to fastq conversion
  */
@@ -41,35 +46,9 @@ process cram2fastq10x {
     tag "${cram.baseName}"
     
     input:
-        set val(sample), file(cram) from cram_files.transpose()
+        set val(ind), val(sample), file(cram) from cram_files_inds
     output:
         set val(sample), file('*.fastq.gz') into fastq_files
-
-    script:
-    """
-    samtools fastq \\
-        -N \\
-        -@ ${task.cpus} \\
-        -1 ${cram}_R1_001.fastq.gz \\
-        -2 ${cram}_R2_001.fastq.gz \\
-        --i1 ${cram}_I1_001.fastq.gz \\
-        -n -i --index-format i8 \\
-        ${cram}
-    """
-}
-
-/*
- * STEP 3 - rename for cellranger
- */
-
-if(false) {
-process fastq10xRename {
-    tag "${fastq.baseName}"
-
-    input:
-        set val(sample), file(fastq) from fastq_files.transpose()
-    output:
-        set val(sample), file('*.fastq.gz') into fastq_files_10x
 
     script:
     """
@@ -81,17 +60,14 @@ process fastq10xRename {
 
 	#so let's just pick up the I1's as the block reps, and swap everything up to the .cram
 	#to samplename_S*COUNT*_L001. that'll do. but we have to keep a count going manually
-
-	count=1
-	for file in *I1_001.fastq.gz
-	do
-		mv "\${file}" "\${file/*.cram/${sample}_S\$count_L001}"
-		file=\$(sed 's/I1/R1/g' <<< \$file)
-		mv "\${file}" "\${file/*.cram/${sample}_S\$count_L001}"
-		file=\$(sed 's/R1/R2/g' <<< \$file)
-		mv "\${file}" "\${file/*.cram/${sample}_S\$count_L001}"
-		(( count++ ))
-	done
+    samtools fastq \\
+        -N \\
+        -@ ${task.cpus} \\
+        -1 ${sample}_S${ind}_L001_R1_001.fastq.gz \\
+        -2 ${sample}_S${ind}_L001_R2_001.fastq.gz \\
+        --i1 ${sample}_S${ind}_L001_I1_001.fastq.gz \\
+        -n -i --index-format i8 \\
+        ${cram}
     """
 }
-}
+
