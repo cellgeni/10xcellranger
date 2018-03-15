@@ -1,6 +1,6 @@
 
 // Pipeline version
-version = '0.1'
+version = '1.5'
 
 params.irods_username = 'vk6'
 params.irods_keytab = '~/irods.keytab'
@@ -45,6 +45,9 @@ cram_files_inds = cram_files
 process cram2fastq10x {
     tag "${cram.baseName}"
     
+    beforeScript "set +u; source activate rnaseq${version}"
+    afterScript "set +u; source deactivate"
+
     input:
         set val(ind), val(sample), file(cram) from cram_files_inds
     output:
