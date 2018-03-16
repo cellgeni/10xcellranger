@@ -51,7 +51,7 @@ cram_files_inds = cram_files
     .map{ [sample_ind++, it[0], it[1]] }
 
 /*
- * STEP 2 - cram to fastq conversion
+ * STEP 3 - cram to fastq conversion + renaming (see previous step)
  */
 
 process cram2fastq10x {
@@ -78,3 +78,33 @@ process cram2fastq10x {
     """
 }
 
+/*
+ * STEP 4 - merge files names back together by sample ID
+ * All files from the same sample will be input together to
+ * cellranger 
+ */
+
+fastq_files_merged = fastq_files
+    .transpose()
+    .groupTuple()
+
+/*
+ * STEP 5 - run cellranger
+ */
+
+process cellranger {
+    tag "${sample}"
+
+    beforeScript "set +u; source /nfs/cellgeni/.cellgenirc"
+
+    input:
+        set val(sample), file(fastq_file) from fastq_files_merged
+    """
+    mkdir fastq
+    mv ${fastq_file} fastq
+    cellranger count \\
+        --id=${sample} \\
+        --fastqs=fastq \\
+        --transcriptome=/nfs/cellgeni/software/refdata-cellranger-hg19_and_mm10-2.1.0
+    """
+}
