@@ -33,9 +33,9 @@ process irods {
     """
 }
 
-def ind = 0
+def sample_ind = 1
 cram_files_inds = cram_files
-    .map{ [ind++, it[0], it[1]] }
+    .map{ [sample_ind++, it[0], it[1]] }
     .transpose()
 
 /*
