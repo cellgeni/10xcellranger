@@ -33,10 +33,22 @@ process irods {
     """
 }
 
+/*
+ * STEP 2 - add iterator to be able to rename the files in a 
+ * format suitable for cellranger
+ * cram_files contains file names like this: 22288_1#1.cram
+ * we want to turn them into SAMPLENAME_S##_L001_I1_001.fastq.gz
+ * the ## in the S doesn't matter, we just want however many unique 
+ * values for however many unique files while staying consistent 
+ * across the same block of I1/R1/R2.
+ * We have to keep a count going manually, so we use
+ * sample_ind for this purpose
+ */
+
 def sample_ind = 1
 cram_files_inds = cram_files
-    .map{ [sample_ind++, it[0], it[1]] }
     .transpose()
+    .map{ [sample_ind++, it[0], it[1]] }
 
 /*
  * STEP 2 - cram to fastq conversion
@@ -55,14 +67,6 @@ process cram2fastq10x {
 
     script:
     """
-    #rename the resulting FASTQ files to be cellranger input friendly
-	#we're starting off with a file named like this: 22288_1#1.cram_I1_001.fastq.gz
-	#and we want to turn it into SAMPLENAME_S##_L001_I1_001.fastq.gz
-	#the ## in the S doesn't matter, we just want however many unique values for however many unique files
-	#while staying consistent across the same block of I1/R1/R2
-
-	#so let's just pick up the I1's as the block reps, and swap everything up to the .cram
-	#to samplename_S*COUNT*_L001. that'll do. but we have to keep a count going manually
     samtools fastq \\
         -N \\
         -@ ${task.cpus} \\
