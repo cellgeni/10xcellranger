@@ -107,6 +107,6 @@ process cellranger {
         --fastqs=fastq \\
         --transcriptome=/nfs/cellgeni/software/refdata-cellranger-hg19_and_mm10-2.1.0 \\
         --localcores=${task.cpus} \\
-        --localmem=${task.memory}
+        --localmem=${task.memory.toGiga()}
     """
 }
