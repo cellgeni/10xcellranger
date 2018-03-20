@@ -105,6 +105,8 @@ process cellranger {
     cellranger count \\
         --id=${sample} \\
         --fastqs=fastq \\
-        --transcriptome=/nfs/cellgeni/software/refdata-cellranger-hg19_and_mm10-2.1.0
+        --transcriptome=/nfs/cellgeni/software/refdata-cellranger-hg19_and_mm10-2.1.0 \\
+        --localcores=${task.cpus} \\
+        --localmem=${task.memory}
     """
 }
